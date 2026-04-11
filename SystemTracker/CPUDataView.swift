@@ -13,7 +13,7 @@ struct CPUDataView: View {
     var body: some View {
         HStack(spacing: 24) {
             ZStack {
-                MetricCircleView(progress: viewModel.cpuProgressForSystem, gradient: Gradient(colors: [.cyan, .blue, .purple]))
+                MetricCircleView(progress: viewModel.cpuProgressForSystem, gradient: Gradient(colors: [.white, .gray, .black]))
                     .frame(width: 88, height: 88)
                 
                 VStack(spacing: 0) {
@@ -23,7 +23,7 @@ struct CPUDataView: View {
             }
             
             ZStack {
-                MetricCircleView(progress: viewModel.cpuProgressForUser, gradient: Gradient(colors: [.cyan, .blue, .purple]))
+                MetricCircleView(progress: viewModel.cpuProgressForUser, gradient: Gradient(colors: [.white, .gray, .secondary]))
                     .frame(width: 88, height: 88)
                 
                 VStack(spacing: 0) {
@@ -33,7 +33,7 @@ struct CPUDataView: View {
             }
             
             ZStack {
-                MetricCircleView(progress: viewModel.cpuProgressForIdle, gradient: Gradient(colors: [.cyan, .blue, .purple]))
+                MetricCircleView(progress: viewModel.cpuProgressForIdle, gradient: Gradient(colors: [.white, .gray, .secondary]))
                     .frame(width: 88, height: 88)
                 
                 VStack(spacing: 0) {

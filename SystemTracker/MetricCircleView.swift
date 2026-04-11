@@ -10,7 +10,7 @@ import SwiftUI
 struct MetricCircleView: View {
     var progress: Double
     var gradient: Gradient
-    var lineWidth: CGFloat = 14
+    var lineWidth: CGFloat = 10
     
     private var clamped: Double {
         min(1, max(0, progress))
