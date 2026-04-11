@@ -10,7 +10,9 @@ import Combine
 import SystemKit
 
 final class SystemDataViewModel: ObservableObject {
-    @Published var cpuUsage: String = ""
+    @Published var cpuUsageForSystem: String = ""
+    @Published var cpuUsageForUser: String = ""
+    @Published var cpuUsageForIdle: String = ""
     
     private var system = System()
     private var timer: AnyCancellable?
@@ -23,12 +25,11 @@ final class SystemDataViewModel: ObservableObject {
         timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
-                self?.cpuUsage = self?.cpuUsageString() ?? ""
+                guard let self else { return }
+                let usage = self.system.usageCPU()
+                self.cpuUsageForSystem = String(format: "%.1f%%", usage.system)
+                self.cpuUsageForUser = String(format: "%.1f%%", usage.user)
+                self.cpuUsageForIdle = String(format: "%.1f%%", usage.idle)
             }
-    }
-    
-    private func cpuUsageString() -> String {
-        let usage = system.usageCPU()
-        return String(format: "system: %.1f%%  user: %.1f%%  idle: %.1f%% ", usage.system, usage.user, usage.idle)
     }
 }

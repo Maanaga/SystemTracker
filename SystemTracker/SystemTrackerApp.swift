@@ -9,9 +9,23 @@ import SwiftUI
 
 @main
 struct SystemTrackerApp: App {
+    @StateObject private var viewModel = SystemDataViewModel()
+    
     var body: some Scene {
-        WindowGroup {
-            CPUDataView(viewModel: SystemDataViewModel())
+        MenuBarExtra {
+            CPUDataView(viewModel: viewModel)
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "gearshape.fill")
+                Text(viewModel.cpuUsageForSystem)
+                Image(systemName: "person.fill")
+                Text(viewModel.cpuUsageForUser)
+                Image(systemName: "moon.fill")
+                Text(viewModel.cpuUsageForIdle)
+            }
+            .font(.caption)
+            .monospacedDigit()
+            .fixedSize(horizontal: true, vertical: false)
         }
     }
 }

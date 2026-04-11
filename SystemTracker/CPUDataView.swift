@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct CPUDataView: View {
-    @StateObject var viewModel: SystemDataViewModel
-    
+    @ObservedObject var viewModel: SystemDataViewModel
+
     var body: some View {
-        VStack {
-            Text(viewModel.cpuUsage)
+        VStack(alignment: .leading, spacing: 8) {
+            Label("\(viewModel.cpuUsageForSystem)", systemImage: "gearshape.fill")
+            Label("\(viewModel.cpuUsageForUser)", systemImage: "person.fill")
+            Label("\(viewModel.cpuUsageForIdle)", systemImage: "moon.fill")
         }
+        .padding()
     }
 }
