@@ -19,6 +19,13 @@ final class SystemDataViewModel: ObservableObject {
     @Published var cpuProgressForIdle: Double = 0.0
 
     @Published var cpuUsageCase: CPUUsageCase = .idle
+    
+    @Published var usedMemory: Double = 0.0
+    @Published var freeMemory: Double = 0.0
+    @Published var cachedFiles: Double = 0.0
+    @Published var compressedFiles: Double = 0.0
+    
+    let totalGB = System.physicalMemory(.gigabyte)
 
     
     private var system = System()
@@ -44,6 +51,16 @@ final class SystemDataViewModel: ObservableObject {
                     systemPercent: usage.system,
                     userPercent: usage.user
                 )
+                updateMemory()
             }
+    }
+    
+    //MARK: - Memory
+    private func updateMemory() {
+        let memory = System.memoryUsage()
+        freeMemory = memory.free
+        cachedFiles = memory.cachedFiles
+        compressedFiles = memory.compressed
+        usedMemory = max(0, totalGB - memory.free)
     }
 }

@@ -63,6 +63,17 @@ struct CPUDataView: View {
                 }
             }
             
+            DashboardMetricCard(
+                title: "Memory",
+                subtitle: "memory is ok",
+                systemImage: "memorychip"
+            ) {
+                Text("Total: \(String(format: "%.2f", viewModel.totalGB)) GB")
+                Text("Used: \(String(format: "%.2f", viewModel.usedMemory)) GB")
+                Text("Free: \(String(format: "%.2f", viewModel.freeMemory)) GB")
+                Text("Compressed: \(String(format: "%.2f", viewModel.compressedFiles)) GB")
+            }
+            
         }
         .padding()
     }
