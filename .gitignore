@@ -1,0 +1,31 @@
+
+*.xcworkspace
+!default.xcworkspace
+xcuserdata/
+*.xcconfig
+
+# SwiftPM
+.build/
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+
+# macOS
+.DS_Store
+
+# Archives
+*.xcarchive
+
+# Provisioning
+*.mobileprovision
+
+# Logs
+*.log
