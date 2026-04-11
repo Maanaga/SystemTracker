@@ -13,7 +13,7 @@ struct CPUDataView: View {
     var body: some View {
         DashboardMetricCard(
             title: "CPU",
-            subtitle: "cpu usage is normal",
+            subtitle: viewModel.cpuUsageCase.subtitle,
             systemImage: "cpu"
         ) {
             HStack(spacing: 24) {

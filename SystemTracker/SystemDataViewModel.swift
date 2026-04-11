@@ -18,6 +18,7 @@ final class SystemDataViewModel: ObservableObject {
     @Published var cpuProgressForUser: Double = 0.0
     @Published var cpuProgressForIdle: Double = 0.0
 
+    @Published var cpuUsageCase: CPUUsageCase = .idle
 
     
     private var system = System()
@@ -39,6 +40,10 @@ final class SystemDataViewModel: ObservableObject {
                 self.cpuProgressForSystem = usage.system / 100.0
                 self.cpuProgressForUser = usage.user / 100.0
                 self.cpuProgressForIdle = usage.idle / 100.0
+                self.cpuUsageCase = CPUUsageCase.from(
+                    systemPercent: usage.system,
+                    userPercent: usage.user
+                )
             }
     }
 }
