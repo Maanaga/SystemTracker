@@ -15,6 +15,9 @@ final class SystemDataViewModel: ObservableObject {
     @Published var cpuUsageForIdle: String = ""
     
     @Published var cpuProgressForSystem: Double = 0.0
+    @Published var cpuProgressForUser: Double = 0.0
+    @Published var cpuProgressForIdle: Double = 0.0
+
 
     
     private var system = System()
@@ -34,6 +37,8 @@ final class SystemDataViewModel: ObservableObject {
                 self.cpuUsageForUser = String(format: "%.1f%%", usage.user)
                 self.cpuUsageForIdle = String(format: "%.1f%%", usage.idle)
                 self.cpuProgressForSystem = usage.system / 100.0
+                self.cpuProgressForUser = usage.user / 100.0
+                self.cpuProgressForIdle = usage.idle / 100.0
             }
     }
 }

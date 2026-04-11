@@ -9,9 +9,9 @@ import SwiftUI
 
 struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
-
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        HStack(spacing: 24) {
             ZStack {
                 MetricCircleView(progress: viewModel.cpuProgressForSystem, gradient: Gradient(colors: [.cyan, .blue, .purple]))
                     .frame(width: 88, height: 88)
@@ -22,8 +22,26 @@ struct CPUDataView: View {
                 }
             }
             
-            Label("\(viewModel.cpuUsageForUser)", systemImage: "person.fill")
-            Label("\(viewModel.cpuUsageForIdle)", systemImage: "moon.fill")
+            ZStack {
+                MetricCircleView(progress: viewModel.cpuProgressForUser, gradient: Gradient(colors: [.cyan, .blue, .purple]))
+                    .frame(width: 88, height: 88)
+                
+                VStack(spacing: 0) {
+                    Text(viewModel.cpuUsageForUser)
+                        .font(.system(size: 18, weight: .semibold))
+                }
+            }
+            
+            ZStack {
+                MetricCircleView(progress: viewModel.cpuProgressForIdle, gradient: Gradient(colors: [.cyan, .blue, .purple]))
+                    .frame(width: 88, height: 88)
+                
+                VStack(spacing: 0) {
+                    Text(viewModel.cpuUsageForIdle)
+                        .font(.system(size: 18, weight: .semibold))
+                }
+            }
+            
         }
         .padding()
     }
