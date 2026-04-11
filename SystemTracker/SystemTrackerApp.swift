@@ -11,7 +11,7 @@ import SwiftUI
 struct SystemTrackerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CPUDataView(viewModel: SystemDataViewModel())
         }
     }
 }

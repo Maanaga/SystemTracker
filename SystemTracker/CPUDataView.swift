@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct CPUDataView: View {
+    @StateObject var viewModel: SystemDataViewModel
+    
     var body: some View {
-        
+        VStack {
+            Text(viewModel.cpuUsage)
+        }
     }
 }
