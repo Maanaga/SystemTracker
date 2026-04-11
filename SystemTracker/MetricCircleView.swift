@@ -27,7 +27,7 @@ struct MetricCircleView: View {
                         gradient: gradient,
                         center: .center,
                         startAngle: .degrees(-90),
-                        endAngle: .degrees(270)
+                        endAngle: .degrees(350)
                     ),
                     style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                 )
