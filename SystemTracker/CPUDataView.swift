@@ -65,7 +65,7 @@ struct CPUDataView: View {
             
             DashboardMetricCard(
                 title: "Memory",
-                subtitle: "memory is ok",
+                subtitle: viewModel.memoryUsageCase.subtitle,
                 systemImage: "memorychip"
             ) {
                 Text("Total: \(String(format: "%.2f", viewModel.totalGB)) GB")

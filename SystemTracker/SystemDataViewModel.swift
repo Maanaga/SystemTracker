@@ -19,7 +19,8 @@ final class SystemDataViewModel: ObservableObject {
     @Published var cpuProgressForIdle: Double = 0.0
 
     @Published var cpuUsageCase: CPUUsageCase = .idle
-    
+    @Published var memoryUsageCase: MemoryUsageCase = .idle
+
     @Published var usedMemory: Double = 0.0
     @Published var freeMemory: Double = 0.0
     @Published var cachedFiles: Double = 0.0
@@ -62,5 +63,9 @@ final class SystemDataViewModel: ObservableObject {
         cachedFiles = memory.cachedFiles
         compressedFiles = memory.compressed
         usedMemory = max(0, totalGB - memory.free)
+        memoryUsageCase = MemoryUsageCase.from(
+            usedGigabytes: usedMemory,
+            totalGigabytes: totalGB
+        )
     }
 }
