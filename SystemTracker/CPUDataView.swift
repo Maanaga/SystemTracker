@@ -12,7 +12,16 @@ struct CPUDataView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("\(viewModel.cpuUsageForSystem)", systemImage: "gearshape.fill")
+            ZStack {
+                MetricCircleView(progress: viewModel.cpuProgressForSystem, gradient: Gradient(colors: [.cyan, .blue, .purple]))
+                    .frame(width: 88, height: 88)
+                
+                VStack(spacing: 0) {
+                    Text(viewModel.cpuUsageForSystem)
+                        .font(.system(size: 18, weight: .semibold))
+                }
+            }
+            
             Label("\(viewModel.cpuUsageForUser)", systemImage: "person.fill")
             Label("\(viewModel.cpuUsageForIdle)", systemImage: "moon.fill")
         }

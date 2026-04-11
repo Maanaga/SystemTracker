@@ -16,7 +16,7 @@ struct SystemTrackerApp: App {
             CPUDataView(viewModel: viewModel)
         } label: {
             HStack(spacing: 6) {
-                Image(systemName: "gearshape.fill")
+                Image(systemName: "cpu")
                 Text(viewModel.cpuUsageForSystem)
                 Image(systemName: "person.fill")
                 Text(viewModel.cpuUsageForUser)
@@ -27,5 +27,6 @@ struct SystemTrackerApp: App {
             .monospacedDigit()
             .fixedSize(horizontal: true, vertical: false)
         }
+        .menuBarExtraStyle(.window)
     }
 }
