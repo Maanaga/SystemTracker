@@ -18,10 +18,8 @@ struct SystemTrackerApp: App {
             HStack(spacing: 6) {
                 Image(systemName: "cpu")
                 Text(viewModel.cpuUsageForSystem)
-                Image(systemName: "person.fill")
-                Text(viewModel.cpuUsageForUser)
-                Image(systemName: "moon.fill")
-                Text(viewModel.cpuUsageForIdle)
+                Image(systemName: "memorychip")
+                Text(viewModel.memoryPercentage)
             }
             .font(.caption)
             .monospacedDigit()

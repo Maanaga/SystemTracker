@@ -17,10 +17,10 @@ final class SystemDataViewModel: ObservableObject {
     @Published var cpuProgressForSystem: Double = 0.0
     @Published var cpuProgressForUser: Double = 0.0
     @Published var cpuProgressForIdle: Double = 0.0
-
+    
     @Published var cpuUsageCase: CPUUsageCase = .idle
     @Published var memoryUsageCase: MemoryUsageCase = .idle
-
+    
     @Published var usedMemory: Double = 0.0
     @Published var freeMemory: Double = 0.0
     @Published var cachedFiles: Double = 0.0
@@ -29,7 +29,7 @@ final class SystemDataViewModel: ObservableObject {
     @Published var memoryPercentage: String = ""
     
     let totalGB = System.physicalMemory(.gigabyte)
-
+    
     
     private var system = System()
     private var timer: AnyCancellable?
@@ -71,5 +71,9 @@ final class SystemDataViewModel: ObservableObject {
             totalGigabytes: totalGB
         )
         memoryPercentage = String(format: "%.1f%%", memoryProgress * 100)
+    }
+    
+    func quit() {
+        NSApplication.shared.terminate(self)
     }
 }

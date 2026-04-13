@@ -9,13 +9,32 @@ import SwiftUI
 
 struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
-    
+    @State private var isQuitHovered = false
+
     var body: some View {
-        VStack(spacing: 12) {
-            cpuCard
-            memoryCard
+        VStack(alignment: .trailing, spacing: 4) {
+            Button {
+                viewModel.quit()
+            } label: {
+                Text("Quit")
+                    .font(.headline.weight(.regular))
+                    .foregroundStyle(isQuitHovered ? Color.primary : Color.secondary)
+            }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .padding(.top, 2)
+            .padding(.bottom, 2)
+            .padding(.horizontal, 2)
+            .onHover { isQuitHovered = $0 }
+            .animation(.easeInOut(duration: 0.15), value: isQuitHovered)
+            VStack(spacing: 12) {
+                cpuCard
+                memoryCard
+            }
         }
-        .padding()
+        .padding(.horizontal)
+        .padding(.bottom)
+        .padding(.top, 8)
     }
     
     private var cpuCard: some View {
