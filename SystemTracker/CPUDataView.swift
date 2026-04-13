@@ -11,87 +11,93 @@ struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
     
     var body: some View {
+        VStack(spacing: 12) {
+            cpuCard
+            memoryCard
+        }
+        .padding()
+    }
+    
+    private var cpuCard: some View {
         DashboardMetricCard(
             title: "CPU",
             subtitle: viewModel.cpuUsageCase.subtitle,
             systemImage: "cpu"
         ) {
             HStack(spacing: 24) {
-                VStack(spacing: 8) {
-                    ZStack {
-                        MetricCircleView(progress: viewModel.cpuProgressForSystem, gradient: Gradient(colors: [.white, .gray, .black]))
-                            .frame(width: 88, height: 88)
-                        
-                        VStack(spacing: 0) {
-                            Text(viewModel.cpuUsageForSystem)
-                                .font(.system(size: 18, weight: .semibold))
-                        }
-                    }
-                    
-                    Text("System")
-                        .font(.system(size: 12, weight: .medium))
-                }
-                
-                VStack(spacing: 8) {
-                    ZStack {
-                        MetricCircleView(progress: viewModel.cpuProgressForUser, gradient: Gradient(colors: [.white, .gray, .secondary]))
-                            .frame(width: 88, height: 88)
-                        
-                        VStack(spacing: 0) {
-                            Text(viewModel.cpuUsageForUser)
-                                .font(.system(size: 18, weight: .semibold))
-                        }
-                    }
-                    
-                    Text("User")
-                        .font(.system(size: 12, weight: .medium))
-                }
-                
-                VStack(spacing: 8) {
-                    ZStack {
-                        MetricCircleView(progress: viewModel.cpuProgressForIdle, gradient: Gradient(colors: [.white, .gray, .secondary]))
-                            .frame(width: 88, height: 88)
-                        
-                        VStack(spacing: 0) {
-                            Text(viewModel.cpuUsageForIdle)
-                                .font(.system(size: 18, weight: .semibold))
-                        }
-                    }
-                    
-                    Text("Idle")
-                        .font(.system(size: 12, weight: .medium))
-                }
+                cpuUsageCircle(
+                    title: "System",
+                    value: viewModel.cpuUsageForSystem,
+                    progress: viewModel.cpuProgressForSystem,
+                    gradient: Gradient(colors: [.white, .gray, .black])
+                )
+                cpuUsageCircle(
+                    title: "User",
+                    value: viewModel.cpuUsageForUser,
+                    progress: viewModel.cpuProgressForUser,
+                    gradient: Gradient(colors: [.white, .gray, .secondary])
+                )
+                cpuUsageCircle(
+                    title: "Idle",
+                    value: viewModel.cpuUsageForIdle,
+                    progress: viewModel.cpuProgressForIdle,
+                    gradient: Gradient(colors: [.white, .gray, .secondary])
+                )
             }
-            
-            DashboardMetricCard(
-                title: "Memory",
-                subtitle: viewModel.memoryUsageCase.subtitle,
-                systemImage: "memorychip"
-            ) {
-                Text("Total: \(String(format: "%.2f", viewModel.totalGB)) GB")
-                
-                HStack {
-                    Text("Used: \(String(format: "%.2f", viewModel.usedMemory)) GB")
-                    
-                    Spacer()
-                    
-                    ZStack {
-                        MetricCircleView(progress: viewModel.memoryProgress, gradient: Gradient(colors: [.white, .gray, .secondary]))
-                            .frame(width: 88, height: 88)
-                        VStack(spacing: 0) {
-                            Text(viewModel.memoryPercentage)
-                                .font(.system(size: 18, weight: .semibold))
-                        }
-                        
-                    }
-                    
-                }
-                
-                Text("Free: \(String(format: "%.2f", viewModel.freeMemory)) GB")
-                Text("Compressed: \(String(format: "%.2f", viewModel.compressedFiles)) GB")
-            }
-            
+            .frame(maxWidth: .infinity, alignment: .center)
         }
-        .padding()
+    }
+    
+    private var memoryCard: some View {
+        DashboardMetricCard(
+            title: "Memory",
+            subtitle: viewModel.memoryUsageCase.subtitle,
+            systemImage: "memorychip"
+        ) {
+            HStack(alignment: .center, spacing: 20) {
+                VStack(alignment: .leading, spacing: 10) {
+                    memoryRow(title: "Total", value: viewModel.totalGB)
+                    memoryRow(title: "Used", value: viewModel.usedMemory)
+                    memoryRow(title: "Free", value: viewModel.freeMemory)
+                    memoryRow(title: "Compressed", value: viewModel.compressedFiles)
+                }
+                
+                Spacer(minLength: 0)
+                
+                ZStack {
+                    MetricCircleView(progress: viewModel.memoryProgress, gradient: Gradient(colors: [.white, .gray, .secondary]))
+                        .frame(width: 88, height: 88)
+                    Text(viewModel.memoryPercentage)
+                        .font(.system(size: 18, weight: .semibold))
+                        .monospacedDigit()
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func cpuUsageCircle(
+        title: String,
+        value: String,
+        progress: Double,
+        gradient: Gradient
+    ) -> some View {
+        VStack(spacing: 8) {
+            ZStack {
+                MetricCircleView(progress: progress, gradient: gradient)
+                    .frame(width: 88, height: 88)
+                Text(value)
+                    .font(.system(size: 18, weight: .semibold))
+                    .monospacedDigit()
+            }
+            Text(title)
+                .font(.system(size: 12, weight: .medium))
+        }
+    }
+    
+    @ViewBuilder
+    private func memoryRow(title: String, value: Double) -> some View {
+        Text("\(title): \(String(format: "%.2f", value)) GB")
+            .monospacedDigit()
     }
 }
