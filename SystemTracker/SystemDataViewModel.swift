@@ -25,6 +25,8 @@ final class SystemDataViewModel: ObservableObject {
     @Published var freeMemory: Double = 0.0
     @Published var cachedFiles: Double = 0.0
     @Published var compressedFiles: Double = 0.0
+    @Published var memoryProgress: Double = 0.0
+    @Published var memoryPercentage: String = ""
     
     let totalGB = System.physicalMemory(.gigabyte)
 
@@ -63,9 +65,11 @@ final class SystemDataViewModel: ObservableObject {
         cachedFiles = memory.cachedFiles
         compressedFiles = memory.compressed
         usedMemory = max(0, totalGB - memory.free)
+        memoryProgress = min(1, max(0, usedMemory / totalGB))
         memoryUsageCase = MemoryUsageCase.from(
             usedGigabytes: usedMemory,
             totalGigabytes: totalGB
         )
+        memoryPercentage = String(format: "%.1f%%", memoryProgress * 100)
     }
 }

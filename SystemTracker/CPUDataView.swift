@@ -69,7 +69,24 @@ struct CPUDataView: View {
                 systemImage: "memorychip"
             ) {
                 Text("Total: \(String(format: "%.2f", viewModel.totalGB)) GB")
-                Text("Used: \(String(format: "%.2f", viewModel.usedMemory)) GB")
+                
+                HStack {
+                    Text("Used: \(String(format: "%.2f", viewModel.usedMemory)) GB")
+                    
+                    Spacer()
+                    
+                    ZStack {
+                        MetricCircleView(progress: viewModel.memoryProgress, gradient: Gradient(colors: [.white, .gray, .secondary]))
+                            .frame(width: 88, height: 88)
+                        VStack(spacing: 0) {
+                            Text(viewModel.memoryPercentage)
+                                .font(.system(size: 18, weight: .semibold))
+                        }
+                        
+                    }
+                    
+                }
+                
                 Text("Free: \(String(format: "%.2f", viewModel.freeMemory)) GB")
                 Text("Compressed: \(String(format: "%.2f", viewModel.compressedFiles)) GB")
             }
