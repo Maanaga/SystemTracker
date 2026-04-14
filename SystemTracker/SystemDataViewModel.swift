@@ -28,7 +28,14 @@ final class SystemDataViewModel: ObservableObject {
     @Published var memoryProgress: Double = 0.0
     @Published var memoryPercentage: String = ""
     
+    @Published private(set) var batterySnapshot: BatterySnapshot?
+    @Published private(set) var batteryCardSubtitle: String = "Loading battery information…"
+    
     let totalGB = System.physicalMemory(.gigabyte)
+    
+    var batterySystemImageName: String {
+        batterySnapshot?.systemImageName ?? "battery.0percent"
+    }
     
     
     private var system = System()
@@ -55,6 +62,7 @@ final class SystemDataViewModel: ObservableObject {
                     userPercent: usage.user
                 )
                 updateMemory()
+                updateBattery()
             }
     }
     
@@ -71,6 +79,20 @@ final class SystemDataViewModel: ObservableObject {
             totalGigabytes: totalGB
         )
         memoryPercentage = String(format: "%.1f%%", memoryProgress * 100)
+    }
+    
+    //MARK: - Battery
+    private func updateBattery() {
+        do {
+            let dict = try BatteryIOPSPowerSource.fetchPrimaryBatteryDictionary()
+            let snapshot = BatterySnapshot(powerSourceDictionary: dict)
+            batterySnapshot = snapshot
+            batteryCardSubtitle = snapshot.cardSubtitle
+        } catch {
+            batterySnapshot = nil
+            batteryCardSubtitle =
+                "No internal battery was found"
+        }
     }
     
     func quit() {

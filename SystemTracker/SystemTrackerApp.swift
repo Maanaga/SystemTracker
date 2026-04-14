@@ -20,6 +20,8 @@ struct SystemTrackerApp: App {
                 Text(viewModel.cpuUsageForSystem)
                 Image(systemName: "memorychip")
                 Text(viewModel.memoryPercentage)
+                Image(systemName: viewModel.batterySystemImageName)
+                Text(viewModel.batterySnapshot?.menuBarPercentLabel ?? "-")
             }
             .font(.caption)
             .monospacedDigit()

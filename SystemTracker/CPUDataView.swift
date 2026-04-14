@@ -30,6 +30,7 @@ struct CPUDataView: View {
             VStack(spacing: 12) {
                 cpuCard
                 memoryCard
+                batteryCard
             }
         }
         .padding(.horizontal)
@@ -89,6 +90,28 @@ struct CPUDataView: View {
                     Text(viewModel.memoryPercentage)
                         .font(.system(size: 18, weight: .semibold))
                         .monospacedDigit()
+                }
+            }
+        }
+    }
+    
+    private var batteryCard: some View {
+        DashboardMetricCard(
+            title: "Battery",
+            subtitle: viewModel.batteryCardSubtitle,
+            systemImage: viewModel.batterySystemImageName
+        ) {
+            if let snap = viewModel.batterySnapshot, snap.isBatteryPresent {
+                HStack(alignment: .center, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Battery Health: \(snap.health)%")
+                            .monospacedDigit()
+                        Text("Cycle Count: \(snap.cycleCount)")
+                            .monospacedDigit()
+                        Text(snap.isCharging ? "Charging" : (snap.isACPowered ? "On AC power" : "On battery"))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
         }
