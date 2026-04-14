@@ -10,7 +10,7 @@ import SwiftUI
 struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
     @State private var isQuitHovered = false
-
+    
     var body: some View {
         VStack(alignment: .trailing, spacing: 4) {
             Button {
@@ -104,13 +104,32 @@ struct CPUDataView: View {
             if let snap = viewModel.batterySnapshot, snap.isBatteryPresent {
                 HStack(alignment: .center, spacing: 20) {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Battery Health: \(snap.health)%")
-                            .monospacedDigit()
+                        HStack {
+                            Text("Battery Health: \(snap.health)%")
+                                .monospacedDigit()
+                            Text(snap.healthConditionText)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
                         Text("Cycle Count: \(snap.cycleCount)")
                             .monospacedDigit()
-                        Text(snap.isCharging ? "Charging" : (snap.isACPowered ? "On AC power" : "On battery"))
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                        
+                        HStack {
+                            Text(snap.isCharging ? "Charging" : (snap.isACPowered ? "On AC power" : "On battery"))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            
+                            Spacer()
+                            
+                            HStack {
+                                Text("Max cap. \(snap.rawMaxCapacity ?? snap.maxCapacity ?? 0) mAh")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Text("Design cap. \(snap.designCapacity ?? 0) mAh")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
                 }
             }

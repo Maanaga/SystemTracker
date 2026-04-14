@@ -14,9 +14,12 @@ struct BatterySnapshot: Sendable {
     var isBatteryPresent: Bool
     var currentCapacity: Int?
     var designCapacity: Int?
-    var maxCapacity: Int
+    var maxCapacity: Int?
+    var rawCurrentCapacity: Int?
+    var rawMaxCapacity: Int?
     var cycleCount: Int
     var health: Int
+    var healthConditionText: String
 }
 
 extension BatterySnapshot {
@@ -34,6 +37,8 @@ extension BatterySnapshot {
 
         let rawCurrentCapacity = Self.int(dict[Self.rawCurrentCapacityKey])
         let rawMaxCapacity = Self.int(dict[Self.rawMaxCapacityKey])
+        self.rawCurrentCapacity = rawCurrentCapacity
+        self.rawMaxCapacity = rawMaxCapacity
         let percentCurrentCapacity = Self.int(dict[kIOPSCurrentCapacityKey])
 
         if let percentCurrentCapacity {
@@ -45,17 +50,21 @@ extension BatterySnapshot {
         }
 
         designCapacity = Self.int(dict[kIOPSDesignCapacityKey]) ?? Self.int(dict["DesignCapacity"])
-        maxCapacity = Self.int(dict[kIOPSMaxCapacityKey]) ?? 100
+        maxCapacity = rawMaxCapacity ?? Self.int(dict["MaxCapacity"]) ?? Self.int(dict[kIOPSMaxCapacityKey])
 
         cycleCount = Self.int(dict[Self.cycleCountKey]) ?? 0
 
+        let healthText = (dict[Self.batteryHealthTextKey] as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        healthConditionText = (healthText?.isEmpty == false) ? healthText! : "Unknown"
+
         if let rawMaxCapacity, let design = designCapacity, design > 0 {
             health = min(100, max(0, rawMaxCapacity * 100 / design))
-        } else if let healthText = dict[Self.batteryHealthTextKey] as? String {
+        } else if let healthText {
             switch healthText {
             case "Good":
                 health = 100
-            case "Fair":
+            case "Normal":
                 health = 80
             case "Poor":
                 health = 60
@@ -68,8 +77,13 @@ extension BatterySnapshot {
     }
 
     var chargePercentForDisplay: Int? {
-        guard let current = currentCapacity, maxCapacity > 0 else { return nil }
-        return min(100, max(0, current * 100 / maxCapacity))
+        if let current = currentCapacity {
+            return min(100, max(0, current))
+        }
+        if let rawCurrentCapacity, let rawMaxCapacity, rawMaxCapacity > 0 {
+            return min(100, max(0, rawCurrentCapacity * 100 / rawMaxCapacity))
+        }
+        return nil
     }
 
     var chargeFraction: Double {
