@@ -8,7 +8,8 @@
 SystemTracker is a lightweight macOS menu bar app that shows live system metrics:
 - CPU usage
 - Memory usage
-- Battery status (charge, health, cycle count)
+- Battery status (charge, health, cycle count, remaining time for battery both: charge/drain)
+- Memory Disk (total, used, free)
 
 ## Run
 
@@ -17,4 +18,4 @@ SystemTracker is a lightweight macOS menu bar app that shows live system metrics
 3. Build and run (`Cmd + R`).
 4. The app appears in the macOS menu bar.
 
-<img width="460" height="717" alt="Image" src="https://github.com/user-attachments/assets/5735a06a-d814-4d10-a09a-cbe6c800a601" />
+<img width="482" height="849" alt="Image" src="https://github.com/user-attachments/assets/a48d6c04-365e-44af-8196-d325138b6ffb" />
