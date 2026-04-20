@@ -114,6 +114,10 @@ extension BatterySnapshot {
     }
 
     var timeRemainingLabel: String {
+        if isACPowered, let chargePercentForDisplay, chargePercentForDisplay >= 100 {
+            return "Fully charged."
+        }
+
         if isCharging {
             if let timeToFullChargeMinutes {
                 return "Time Remaining to full: \(Self.formattedDuration(minutes: timeToFullChargeMinutes))"
@@ -128,7 +132,7 @@ extension BatterySnapshot {
             return "Calculating time remaining..."
         }
 
-        return "Calculating time remaining..."
+        return "On AC power."
     }
 
     var menuBarPercentLabel: String {
