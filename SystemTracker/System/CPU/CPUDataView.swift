@@ -11,6 +11,8 @@ struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
     @State private var isQuitHovered = false
     @State private var isContentVisible = false
+    @State private var containerZoomScale: CGFloat = 1
+    @State private var frameLift: CGFloat = 0
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 4) {
@@ -28,27 +30,47 @@ struct CPUDataView: View {
             .padding(.horizontal, 2)
             .onHover { isQuitHovered = $0 }
             .animation(.easeInOut(duration: 0.15), value: isQuitHovered)
-            .opacity(isContentVisible ? 1 : 0)
-            .offset(y: isContentVisible ? 0 : -6)
-            .blur(radius: isContentVisible ? 0 : 3)
-            .animation(.easeOut(duration: 0.2), value: isContentVisible)
             VStack(spacing: 12) {
-                animatedAppear(cpuCard, delay: 0.02)
-                animatedAppear(memoryCard, delay: 0.08)
-                animatedAppear(batteryCard, delay: 0.14)
+                cpuCard
+                memoryCard
+                batteryCard
             }
         }
         .padding(.horizontal)
         .padding(.bottom)
         .padding(.top, 8)
+        .opacity(isContentVisible ? 1 : 0)
+        .offset(y: frameLift)
+        .scaleEffect((isContentVisible ? 1 : 0.97) * containerZoomScale, anchor: .top)
+        .blur(radius: isContentVisible ? 0 : 12)
+        .saturation(isContentVisible ? 1 : 0.92)
+        .compositingGroup()
+        .animation(
+            .spring(response: 0.46, dampingFraction: 0.9).delay(0.01),
+            value: isContentVisible
+        )
         .onAppear {
             isContentVisible = false
+            frameLift = 10
+            containerZoomScale = 0.965
             withAnimation(.spring(response: 0.36, dampingFraction: 0.88)) {
                 isContentVisible = true
+                frameLift = -3
+                containerZoomScale = 1.035
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.16) {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    frameLift = 0
+                    containerZoomScale = 1
+                }
             }
         }
         .onDisappear {
-            isContentVisible = false
+            withAnimation(.easeIn(duration: 0.14)) {
+                isContentVisible = false
+                frameLift = 10
+                containerZoomScale = 0.965
+            }
         }
     }
     
@@ -179,16 +201,4 @@ struct CPUDataView: View {
             .monospacedDigit()
     }
 
-    @ViewBuilder
-    private func animatedAppear<V: View>(_ view: V, delay: Double) -> some View {
-        view
-            .opacity(isContentVisible ? 1 : 0)
-            .offset(y: isContentVisible ? 0 : 10)
-            .scaleEffect(isContentVisible ? 1 : 0.985, anchor: .top)
-            .blur(radius: isContentVisible ? 0 : 8)
-            .animation(
-                .spring(response: 0.42, dampingFraction: 0.9).delay(delay),
-                value: isContentVisible
-            )
-    }
 }
