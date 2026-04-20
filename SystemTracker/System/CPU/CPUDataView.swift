@@ -33,6 +33,7 @@ struct CPUDataView: View {
             VStack(spacing: 12) {
                 cpuCard
                 memoryCard
+                diskCard
                 batteryCard
             }
         }
@@ -179,6 +180,20 @@ struct CPUDataView: View {
             }
         }
     }
+
+    private var diskCard: some View {
+        DashboardMetricCard(
+            title: "Disk",
+            subtitle: viewModel.diskName,
+            systemImage: "internaldrive"
+        ) {
+            HStack(alignment: .center, spacing: 20) {
+                diskMemoryRow(title: "Total", value: viewModel.diskTotalGB)
+                diskMemoryRow(title: "Used", value: viewModel.diskUsedGB)
+                diskMemoryRow(title: "Free", value: viewModel.diskFreeGB)
+            }
+        }
+    }
     
     @ViewBuilder
     private func cpuUsageCircle(
@@ -204,6 +219,13 @@ struct CPUDataView: View {
     private func memoryRow(title: String, value: Double) -> some View {
         Text("\(title): \(String(format: "%.2f", value)) GB")
             .monospacedDigit()
+    }
+    
+    @ViewBuilder
+    private func diskMemoryRow(title: String, value: Double) -> some View {
+        Text("\(title): \(String(format: "%.2f", value)) GB")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
     }
 
 }
