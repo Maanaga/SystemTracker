@@ -29,7 +29,7 @@ final class SystemDataViewModel: ObservableObject {
     @Published var compressedFiles: Double = 0.0
     @Published var memoryProgress: Double = 0.0
     @Published var memoryPercentage: String = ""
-
+    
     @Published var diskName: String = "Loading..."
     @Published var diskUsedGB: Double = 0.0
     @Published var diskFreeGB: Double = 0.0
@@ -57,24 +57,29 @@ final class SystemDataViewModel: ObservableObject {
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self else { return }
-                let usage = self.system.usageCPU()
-                let generalUsage = min(100, max(0, usage.system + usage.user))
-                self.cpuUsageGeneral = String(format: "%.1f%%", generalUsage)
-                self.cpuUsageForSystem = String(format: "%.1f%%", usage.system)
-                self.cpuUsageForUser = String(format: "%.1f%%", usage.user)
-                self.cpuUsageForIdle = String(format: "%.1f%%", usage.idle)
-                self.cpuProgressGeneral = generalUsage / 100.0
-                self.cpuProgressForSystem = usage.system / 100.0
-                self.cpuProgressForUser = usage.user / 100.0
-                self.cpuProgressForIdle = usage.idle / 100.0
-                self.cpuUsageCase = CPUUsageCase.from(
-                    systemPercent: usage.system,
-                    userPercent: usage.user
-                )
+                updateCPU()
                 updateMemory()
                 updateDisk()
                 updateBattery()
             }
+    }
+    
+    //MARK: - CPU
+    private func updateCPU() {
+        let usage = self.system.usageCPU()
+        let generalUsage = min(100, max(0, usage.system + usage.user))
+        cpuUsageGeneral = String(format: "%.1f%%", generalUsage)
+        cpuUsageForSystem = String(format: "%.1f%%", usage.system)
+        cpuUsageForUser = String(format: "%.1f%%", usage.user)
+        cpuUsageForIdle = String(format: "%.1f%%", usage.idle)
+        cpuProgressGeneral = generalUsage / 100.0
+        cpuProgressForSystem = usage.system / 100.0
+        cpuProgressForUser = usage.user / 100.0
+        cpuProgressForIdle = usage.idle / 100.0
+        cpuUsageCase = CPUUsageCase.from(
+            systemPercent: usage.system,
+            userPercent: usage.user
+        )
     }
     
     //MARK: - Memory
@@ -91,7 +96,7 @@ final class SystemDataViewModel: ObservableObject {
         )
         memoryPercentage = String(format: "%.1f%%", memoryProgress * 100)
     }
-
+    
     //MARK: - Disk
     private func updateDisk() {
         let rootURL = URL(fileURLWithPath: "/")
@@ -102,14 +107,14 @@ final class SystemDataViewModel: ObservableObject {
             .volumeAvailableCapacityForImportantUsageKey,
             .volumeAvailableCapacityKey
         ]
-
+        
         do {
             let values = try rootURL.resourceValues(forKeys: keys)
             let totalBytes = Int64(values.volumeTotalCapacity ?? 0)
             let importantFreeBytes = values.volumeAvailableCapacityForImportantUsage
             let fallbackFreeBytes = values.volumeAvailableCapacity.map(Int64.init)
             let freeBytes = importantFreeBytes ?? fallbackFreeBytes ?? Int64(0)
-
+            
             guard totalBytes > 0 else {
                 diskName = values.volumeLocalizedName ?? values.volumeName ?? "System Disk"
                 diskUsedGB = 0
@@ -117,10 +122,10 @@ final class SystemDataViewModel: ObservableObject {
                 diskTotalGB = 0
                 return
             }
-
+            
             let usedBytes = max(Int64(0), totalBytes - freeBytes)
             _ = min(1.0, max(0.0, Double(usedBytes) / Double(totalBytes)))
-
+            
             diskName = values.volumeLocalizedName ?? values.volumeName ?? "System Disk"
             diskUsedGB = bytesToGigabytes(usedBytes)
             diskFreeGB = bytesToGigabytes(freeBytes)
@@ -143,14 +148,14 @@ final class SystemDataViewModel: ObservableObject {
         } catch {
             batterySnapshot = nil
             batteryCardSubtitle =
-                "No internal battery was found"
+            "No internal battery was found"
         }
     }
     
     func quit() {
         NSApplication.shared.terminate(self)
     }
-
+    
     private func bytesToGigabytes(_ bytes: Int64) -> Double {
         Double(bytes) / 1_073_741_824.0
     }
