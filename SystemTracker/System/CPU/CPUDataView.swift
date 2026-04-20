@@ -10,6 +10,7 @@ import SwiftUI
 struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
     @State private var isQuitHovered = false
+    @State private var isContentVisible = false
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 4) {
@@ -27,15 +28,28 @@ struct CPUDataView: View {
             .padding(.horizontal, 2)
             .onHover { isQuitHovered = $0 }
             .animation(.easeInOut(duration: 0.15), value: isQuitHovered)
+            .opacity(isContentVisible ? 1 : 0)
+            .offset(y: isContentVisible ? 0 : -6)
+            .blur(radius: isContentVisible ? 0 : 3)
+            .animation(.easeOut(duration: 0.2), value: isContentVisible)
             VStack(spacing: 12) {
-                cpuCard
-                memoryCard
-                batteryCard
+                animatedAppear(cpuCard, delay: 0.02)
+                animatedAppear(memoryCard, delay: 0.08)
+                animatedAppear(batteryCard, delay: 0.14)
             }
         }
         .padding(.horizontal)
         .padding(.bottom)
         .padding(.top, 8)
+        .onAppear {
+            isContentVisible = false
+            withAnimation(.spring(response: 0.36, dampingFraction: 0.88)) {
+                isContentVisible = true
+            }
+        }
+        .onDisappear {
+            isContentVisible = false
+        }
     }
     
     private var cpuCard: some View {
@@ -163,5 +177,18 @@ struct CPUDataView: View {
     private func memoryRow(title: String, value: Double) -> some View {
         Text("\(title): \(String(format: "%.2f", value)) GB")
             .monospacedDigit()
+    }
+
+    @ViewBuilder
+    private func animatedAppear<V: View>(_ view: V, delay: Double) -> some View {
+        view
+            .opacity(isContentVisible ? 1 : 0)
+            .offset(y: isContentVisible ? 0 : 10)
+            .scaleEffect(isContentVisible ? 1 : 0.985, anchor: .top)
+            .blur(radius: isContentVisible ? 0 : 8)
+            .animation(
+                .spring(response: 0.42, dampingFraction: 0.9).delay(delay),
+                value: isContentVisible
+            )
     }
 }
