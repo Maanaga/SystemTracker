@@ -114,6 +114,9 @@ struct CPUDataView: View {
                         Text("Cycle Count: \(snap.cycleCount)")
                             .monospacedDigit()
                         
+                        Text("\(snap.timeRemainingLabel)")
+                            .monospacedDigit()
+                        
                         HStack {
                             Text(snap.isCharging ? "Charging" : (snap.isACPowered ? "On AC power" : "On battery"))
                                 .font(.subheadline)

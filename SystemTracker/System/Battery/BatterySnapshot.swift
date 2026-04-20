@@ -20,6 +20,8 @@ struct BatterySnapshot: Sendable {
     var cycleCount: Int
     var health: Int
     var healthConditionText: String
+    var timeToFullChargeMinutes: Int?
+    var timeToEmptyMinutes: Int?
 }
 
 extension BatterySnapshot {
@@ -53,6 +55,8 @@ extension BatterySnapshot {
         maxCapacity = rawMaxCapacity ?? Self.int(dict["MaxCapacity"]) ?? Self.int(dict[kIOPSMaxCapacityKey])
 
         cycleCount = Self.int(dict[Self.cycleCountKey]) ?? 0
+        timeToFullChargeMinutes = Self.remainingMinutes(dict[kIOPSTimeToFullChargeKey])
+        timeToEmptyMinutes = Self.remainingMinutes(dict[kIOPSTimeToEmptyKey])
 
         let healthText = (dict[Self.batteryHealthTextKey] as? String)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -109,6 +113,24 @@ extension BatterySnapshot {
         return parts.joined(separator: " - ") + "."
     }
 
+    var timeRemainingLabel: String {
+        if isCharging {
+            if let timeToFullChargeMinutes {
+                return "Time Remaining to full: \(Self.formattedDuration(minutes: timeToFullChargeMinutes))"
+            }
+            return "Calculating time to full..."
+        }
+
+        if !isACPowered {
+            if let timeToEmptyMinutes {
+                return "Time Remaining to empty: \(Self.formattedDuration(minutes: timeToEmptyMinutes))"
+            }
+            return "Calculating time remaining..."
+        }
+
+        return "Calculating time remaining..."
+    }
+
     var menuBarPercentLabel: String {
         guard isBatteryPresent else { return "—" }
         if let p = chargePercentForDisplay {
@@ -149,5 +171,23 @@ extension BatterySnapshot {
         if let v = value as? Bool { return v }
         if let v = value as? NSNumber { return v.boolValue }
         return defaultIfMissing
+    }
+
+    private static func remainingMinutes(_ value: Any?) -> Int? {
+        guard let minutes = int(value), minutes > 0 else { return nil }
+        return minutes
+    }
+
+    private static func formattedDuration(minutes: Int) -> String {
+        let hours = minutes / 60
+        let mins = minutes % 60
+
+        if hours > 0, mins > 0 {
+            return "\(hours)h \(mins)m"
+        }
+        if hours > 0 {
+            return "\(hours)h"
+        }
+        return "\(mins)m"
     }
 }
