@@ -10,6 +10,7 @@ import Combine
 import SystemKit
 
 final class SystemDataViewModel: ObservableObject {
+    @Published var cpuUsageGeneral: String = ""
     @Published var cpuUsageForSystem: String = ""
     @Published var cpuUsageForUser: String = ""
     @Published var cpuUsageForIdle: String = ""
@@ -17,6 +18,7 @@ final class SystemDataViewModel: ObservableObject {
     @Published var cpuProgressForSystem: Double = 0.0
     @Published var cpuProgressForUser: Double = 0.0
     @Published var cpuProgressForIdle: Double = 0.0
+    @Published var cpuProgressGeneral: Double = 0.0
     
     @Published var cpuUsageCase: CPUUsageCase = .idle
     @Published var memoryUsageCase: MemoryUsageCase = .idle
@@ -51,9 +53,12 @@ final class SystemDataViewModel: ObservableObject {
             .sink { [weak self] _ in
                 guard let self else { return }
                 let usage = self.system.usageCPU()
+                let generalUsage = min(100, max(0, usage.system + usage.user))
+                self.cpuUsageGeneral = String(format: "%.1f%%", generalUsage)
                 self.cpuUsageForSystem = String(format: "%.1f%%", usage.system)
                 self.cpuUsageForUser = String(format: "%.1f%%", usage.user)
                 self.cpuUsageForIdle = String(format: "%.1f%%", usage.idle)
+                self.cpuProgressGeneral = generalUsage / 100.0
                 self.cpuProgressForSystem = usage.system / 100.0
                 self.cpuProgressForUser = usage.user / 100.0
                 self.cpuProgressForIdle = usage.idle / 100.0

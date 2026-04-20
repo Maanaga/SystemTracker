@@ -17,7 +17,7 @@ struct SystemTrackerApp: App {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: "cpu")
-                Text(viewModel.cpuUsageForSystem)
+                Text(viewModel.cpuUsageGeneral)
                 Image(systemName: "memorychip")
                 Text(viewModel.memoryPercentage)
                 Image(systemName: viewModel.batterySystemImageName)

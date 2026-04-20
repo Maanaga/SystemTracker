@@ -80,27 +80,32 @@ struct CPUDataView: View {
             subtitle: viewModel.cpuUsageCase.subtitle,
             systemImage: "cpu"
         ) {
-            HStack(spacing: 24) {
-                cpuUsageCircle(
-                    title: "System",
-                    value: viewModel.cpuUsageForSystem,
-                    progress: viewModel.cpuProgressForSystem,
-                    gradient: Gradient(colors: [.white, .gray, .black])
-                )
-                cpuUsageCircle(
-                    title: "User",
-                    value: viewModel.cpuUsageForUser,
-                    progress: viewModel.cpuProgressForUser,
-                    gradient: Gradient(colors: [.white, .gray, .secondary])
-                )
-                cpuUsageCircle(
-                    title: "Idle",
-                    value: viewModel.cpuUsageForIdle,
-                    progress: viewModel.cpuProgressForIdle,
-                    gradient: Gradient(colors: [.white, .gray, .secondary])
-                )
+            VStack(alignment: .leading, spacing: 12) {
+                Text("General: \(viewModel.cpuUsageGeneral)")
+                    .font(.subheadline.weight(.semibold))
+                    .monospacedDigit()
+                HStack(spacing: 24) {
+                    cpuUsageCircle(
+                        title: "System",
+                        value: viewModel.cpuUsageForSystem,
+                        progress: viewModel.cpuProgressForSystem,
+                        gradient: Gradient(colors: [.white, .gray, .black])
+                    )
+                    cpuUsageCircle(
+                        title: "User",
+                        value: viewModel.cpuUsageForUser,
+                        progress: viewModel.cpuProgressForUser,
+                        gradient: Gradient(colors: [.white, .gray, .secondary])
+                    )
+                    cpuUsageCircle(
+                        title: "Idle",
+                        value: viewModel.cpuUsageForIdle,
+                        progress: viewModel.cpuProgressForIdle,
+                        gradient: Gradient(colors: [.white, .gray, .secondary])
+                    )
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
             }
-            .frame(maxWidth: .infinity, alignment: .center)
         }
     }
     
