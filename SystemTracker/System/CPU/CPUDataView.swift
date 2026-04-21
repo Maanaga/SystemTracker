@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
+    @ObservedObject private var preferencesStore = PreferencesSelectionStore.shared
     @Environment(\.dismiss) private var dismiss
     @State private var isPreferencesHovered = false
     @State private var isQuitHovered = false
@@ -50,10 +51,9 @@ struct CPUDataView: View {
             .padding(.bottom, 2)
             .padding(.horizontal, 2)
             VStack(spacing: 12) {
-                cpuCard
-                memoryCard
-                diskCard
-                batteryCard
+                ForEach(preferencesStore.menuItems) { metric in
+                    dashboardCard(for: metric)
+                }
             }
         }
         .padding(.horizontal)
@@ -91,6 +91,20 @@ struct CPUDataView: View {
                 frameLift = 10
                 containerZoomScale = 0.965
             }
+        }
+    }
+
+    @ViewBuilder
+    private func dashboardCard(for metric: PreferenceMetric) -> some View {
+        switch metric {
+        case .cpu:
+            cpuCard
+        case .memory:
+            memoryCard
+        case .disk:
+            diskCard
+        case .battery:
+            batteryCard
         }
     }
     

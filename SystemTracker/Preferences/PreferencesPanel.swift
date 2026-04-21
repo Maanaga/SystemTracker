@@ -8,7 +8,6 @@
 
 import SwiftUI
 import AppKit
-import QuartzCore
 
 private final class PreferencesPanel: NSPanel {
     override var canBecomeKey: Bool { true }
