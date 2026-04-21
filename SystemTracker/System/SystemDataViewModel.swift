@@ -201,7 +201,7 @@ final class SystemDataViewModel: ObservableObject {
             temperatureMax = formattedTemperature(maxSample.celsius)
         }
 
-        temperatureCardSubtitle = "SystemKit battery thermal history"
+        temperatureCardSubtitle = "Temperature History"
     }
     
     func quit() {

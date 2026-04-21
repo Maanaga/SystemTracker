@@ -53,14 +53,14 @@ struct PreferencesView: View {
             
             VStack(spacing: 8) {
                 ForEach(items) { item in
-                    HStack(spacing: 12) {
+                    HStack(spacing: 6) {
                         Image(systemName: item.systemImage)
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundStyle(.primary)
                             .frame(width: 24, alignment: .center)
                         
                         Text(item.title)
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.system(size: 15, weight: .semibold))
                             .foregroundStyle(.primary)
                             .lineLimit(1)
                         

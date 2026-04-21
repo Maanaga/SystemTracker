@@ -10,7 +10,7 @@ import Charts
 
 struct TemperatureCardView: View {
     @ObservedObject var viewModel: SystemDataViewModel
-
+    
     var body: some View {
         DashboardMetricCard(
             title: "Temperature",
@@ -18,12 +18,6 @@ struct TemperatureCardView: View {
             systemImage: "thermometer.medium"
         ) {
             VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 18) {
-                    temperatureValue(title: "Current", value: viewModel.temperatureCurrent)
-                    temperatureValue(title: "Min", value: viewModel.temperatureMin)
-                    temperatureValue(title: "Max", value: viewModel.temperatureMax)
-                }
-
                 if viewModel.temperatureHistory.isEmpty {
                     Text("Waiting for temperature samples…")
                         .font(.subheadline)
@@ -36,7 +30,7 @@ struct TemperatureCardView: View {
                         )
                         .interpolationMethod(.catmullRom)
                         .foregroundStyle(.primary)
-
+                        
                         AreaMark(
                             x: .value("Time", sample.date),
                             y: .value("Battery Temperature", sample.celsius)
@@ -70,18 +64,6 @@ struct TemperatureCardView: View {
                     .frame(height: 130)
                 }
             }
-        }
-    }
-
-    @ViewBuilder
-    private func temperatureValue(title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.subheadline.weight(.semibold))
-                .monospacedDigit()
         }
     }
 }
