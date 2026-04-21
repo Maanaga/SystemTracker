@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var isPreferencesHovered = false
     @State private var isQuitHovered = false
     @State private var isContentVisible = false
     @State private var containerZoomScale: CGFloat = 1
@@ -16,20 +18,37 @@ struct CPUDataView: View {
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 4) {
-            Button {
-                viewModel.quit()
-            } label: {
-                Text("Quit")
-                    .font(.headline.weight(.regular))
-                    .foregroundStyle(isQuitHovered ? Color.primary : Color.secondary)
+            HStack(spacing: 12) {
+                Button {
+                    dismiss()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                        PreferencesPanelController.shared.show()
+                    }
+                } label: {
+                    Text("Preferences")
+                        .font(.headline.weight(.regular))
+                        .foregroundStyle(isPreferencesHovered ? Color.primary : Color.secondary)
+                }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .onHover { isPreferencesHovered = $0 }
+                .animation(.easeInOut(duration: 0.15), value: isPreferencesHovered)
+                
+                Button {
+                    viewModel.quit()
+                } label: {
+                    Text("Quit")
+                        .font(.headline.weight(.regular))
+                        .foregroundStyle(isQuitHovered ? Color.primary : Color.secondary)
+                }
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
+                .onHover { isQuitHovered = $0 }
+                .animation(.easeInOut(duration: 0.15), value: isQuitHovered)
             }
-            .buttonStyle(.plain)
-            .contentShape(Rectangle())
             .padding(.top, 2)
             .padding(.bottom, 2)
             .padding(.horizontal, 2)
-            .onHover { isQuitHovered = $0 }
-            .animation(.easeInOut(duration: 0.15), value: isQuitHovered)
             VStack(spacing: 12) {
                 cpuCard
                 memoryCard
