@@ -12,6 +12,7 @@ enum PreferenceMetric: String, CaseIterable, Codable, Identifiable {
     case memory
     case disk
     case battery
+    case temperature
 
     var id: String { rawValue }
 
@@ -21,6 +22,7 @@ enum PreferenceMetric: String, CaseIterable, Codable, Identifiable {
         case .memory: return "Memory"
         case .disk: return "Disk"
         case .battery: return "Battery"
+        case .temperature: return "Temperature"
         }
     }
 
@@ -30,6 +32,7 @@ enum PreferenceMetric: String, CaseIterable, Codable, Identifiable {
         case .memory: return "memorychip"
         case .disk: return "internaldrive"
         case .battery: return "battery.100"
+        case .temperature: return "thermometer.medium"
         }
     }
 }

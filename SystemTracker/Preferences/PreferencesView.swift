@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PreferencesView: View {
     @ObservedObject private var preferencesStore = PreferencesSelectionStore.shared
-
+    
     var body: some View {
         HStack(alignment: .top, spacing: 18) {
             selectionColumn(
@@ -19,7 +19,7 @@ struct PreferencesView: View {
                 items: preferencesStore.menuItems,
                 mode: .selected
             )
-
+            
             selectionColumn(
                 title: "Available",
                 subtitle: "click to append",
@@ -31,7 +31,7 @@ struct PreferencesView: View {
         .frame(width: 500, height: 360, alignment: .top)
         .glassEffect(in: RoundedRectangle(cornerRadius: 24, style: .continuous))
     }
-
+    
     @ViewBuilder
     private func selectionColumn(
         title: String,
@@ -44,13 +44,13 @@ struct PreferencesView: View {
                 Text(title)
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(.primary)
-
+                
                 Text(subtitle)
                     .font(.headline.weight(.regular))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 2)
-
+            
             VStack(spacing: 8) {
                 ForEach(items) { item in
                     HStack(spacing: 12) {
@@ -58,14 +58,14 @@ struct PreferencesView: View {
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundStyle(.primary)
                             .frame(width: 24, alignment: .center)
-
+                        
                         Text(item.title)
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundStyle(.primary)
                             .lineLimit(1)
-
+                        
                         Spacer(minLength: 8)
-
+                        
                         if mode == .selected {
                             Button {
                                 preferencesStore.removeFromMenu(item)

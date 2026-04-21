@@ -105,6 +105,8 @@ struct CPUDataView: View {
             diskCard
         case .battery:
             batteryCard
+        case .temperature:
+            TemperatureCardView(viewModel: viewModel)
         }
     }
     
@@ -227,7 +229,7 @@ struct CPUDataView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private func cpuUsageCircle(
         title: String,

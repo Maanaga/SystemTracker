@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 import SystemKit
+import IOKit
 
 final class SystemDataViewModel: ObservableObject {
     @Published var cpuUsageGeneral: String = ""
@@ -37,6 +38,11 @@ final class SystemDataViewModel: ObservableObject {
     
     @Published private(set) var batterySnapshot: BatterySnapshot?
     @Published private(set) var batteryCardSubtitle: String = "Loading battery information…"
+    @Published private(set) var temperatureCurrent: String = "--"
+    @Published private(set) var temperatureMin: String = "--"
+    @Published private(set) var temperatureMax: String = "--"
+    @Published private(set) var temperatureCardSubtitle: String = "Waiting for sensor data…"
+    @Published private(set) var temperatureHistory: [TemperatureSample] = []
     
     let totalGB = System.physicalMemory(.gigabyte)
     
@@ -46,10 +52,20 @@ final class SystemDataViewModel: ObservableObject {
     
     
     private var system = System()
+    private var systemKitBattery = Battery()
     private var timer: AnyCancellable?
+    private var isTemperatureSensorAvailable = false
+    private let temperatureHistoryLimit = 120
     
     init() {
+        setupTemperatureSensor()
         startMonitoring()
+    }
+
+    deinit {
+        if isTemperatureSensorAvailable {
+            _ = systemKitBattery.close()
+        }
     }
     
     func startMonitoring() {
@@ -61,6 +77,7 @@ final class SystemDataViewModel: ObservableObject {
                 updateMemory()
                 updateDisk()
                 updateBattery()
+                updateTemperature()
             }
     }
     
@@ -151,6 +168,41 @@ final class SystemDataViewModel: ObservableObject {
             "No internal battery was found"
         }
     }
+
+    //MARK: - Temperature
+    private func updateTemperature() {
+        guard isTemperatureSensorAvailable else {
+            temperatureCardSubtitle = "Temperature sensor is unavailable on this Mac"
+            temperatureCurrent = "--"
+            temperatureMin = "--"
+            temperatureMax = "--"
+            return
+        }
+
+        let batteryTemperature = systemKitBattery.temperature(.celsius)
+        guard batteryTemperature.isFinite, batteryTemperature > 0 else {
+            temperatureCardSubtitle = "No battery temperature data from SystemKit"
+            return
+        }
+
+        let now = Date()
+        temperatureHistory.append(TemperatureSample(date: now, celsius: batteryTemperature))
+        if temperatureHistory.count > temperatureHistoryLimit {
+            temperatureHistory.removeFirst(temperatureHistory.count - temperatureHistoryLimit)
+        }
+
+        temperatureCurrent = formattedTemperature(batteryTemperature)
+
+        if let minSample = temperatureHistory.min(by: { $0.celsius < $1.celsius }) {
+            temperatureMin = formattedTemperature(minSample.celsius)
+        }
+
+        if let maxSample = temperatureHistory.max(by: { $0.celsius < $1.celsius }) {
+            temperatureMax = formattedTemperature(maxSample.celsius)
+        }
+
+        temperatureCardSubtitle = "SystemKit battery thermal history"
+    }
     
     func quit() {
         NSApplication.shared.terminate(self)
@@ -159,4 +211,22 @@ final class SystemDataViewModel: ObservableObject {
     private func bytesToGigabytes(_ bytes: Int64) -> Double {
         Double(bytes) / 1_073_741_824.0
     }
+
+    private func formattedTemperature(_ celsius: Double) -> String {
+        String(format: "%.2fC", celsius)
+    }
+
+    private func setupTemperatureSensor() {
+        let result = systemKitBattery.open()
+        isTemperatureSensorAvailable = (result == KERN_SUCCESS || result == SystemKit.kIOReturnStillOpen)
+        if !isTemperatureSensorAvailable {
+            temperatureCardSubtitle = "Temperature sensor is unavailable on this Mac"
+        }
+    }
+}
+
+struct TemperatureSample: Identifiable {
+    let id = UUID()
+    let date: Date
+    let celsius: Double
 }
