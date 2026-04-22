@@ -109,6 +109,8 @@ struct CPUDataView: View {
             batteryCard
         case .temperature:
             TemperatureCardView(viewModel: viewModel)
+        case .screenTime:
+            ScreenTimeCardView(viewModel: viewModel)
         }
     }
     

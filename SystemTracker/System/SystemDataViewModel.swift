@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 import SystemKit
 import IOKit
+import AppKit
 
 final class SystemDataViewModel: ObservableObject {
     @Published var cpuUsageGeneral: String = ""
@@ -43,6 +44,8 @@ final class SystemDataViewModel: ObservableObject {
     @Published private(set) var temperatureMax: String = "--"
     @Published private(set) var temperatureCardSubtitle: String = "Waiting for sensor data…"
     @Published private(set) var temperatureHistory: [TemperatureSample] = []
+    @Published private(set) var screenTimeCardSubtitle: String = "Tracking active apps since launch"
+    @Published private(set) var screenTimeEntries: [AppScreenTimeEntry] = []
     
     let totalGB = System.physicalMemory(.gigabyte)
     
@@ -56,6 +59,13 @@ final class SystemDataViewModel: ObservableObject {
     private var timer: AnyCancellable?
     private var isTemperatureSensorAvailable = false
     private let temperatureHistoryLimit = 120
+    private let screenTimeEntryLimit = 5
+    private var appUsageByBundleIdentifier: [String: TimeInterval] = [:]
+    private var appNameByBundleIdentifier: [String: String] = [:]
+    private var appIconByBundleIdentifier: [String: NSImage] = [:]
+    private var activeBundleIdentifier: String?
+    private var activeAppName: String = "Unknown App"
+    private var activeAppSessionStartDate: Date?
     
     init() {
         setupTemperatureSensor()
@@ -78,6 +88,7 @@ final class SystemDataViewModel: ObservableObject {
                 updateDisk()
                 updateBattery()
                 updateTemperature()
+                updateScreenTime()
             }
     }
     
@@ -203,6 +214,41 @@ final class SystemDataViewModel: ObservableObject {
 
         temperatureCardSubtitle = "Temperature History"
     }
+
+    // MARK: - Screen Time
+    private func updateScreenTime() {
+        let now = Date()
+
+        guard let frontmostApp = NSWorkspace.shared.frontmostApplication else {
+            screenTimeCardSubtitle = "No active app detected"
+            return
+        }
+
+        let bundleIdentifier = frontmostApp.bundleIdentifier ?? "process-\(frontmostApp.processIdentifier)"
+        let appName = frontmostApp.localizedName ?? "Unknown App"
+        appNameByBundleIdentifier[bundleIdentifier] = appName
+        if let icon = frontmostApp.icon {
+            appIconByBundleIdentifier[bundleIdentifier] = icon
+        }
+
+        guard let previousBundleIdentifier = activeBundleIdentifier,
+              let previousStartDate = activeAppSessionStartDate else {
+            activeBundleIdentifier = bundleIdentifier
+            activeAppName = appName
+            activeAppSessionStartDate = now
+            refreshScreenTimeEntries(activeBundleIdentifier: bundleIdentifier)
+            return
+        }
+
+        let elapsed = max(0, now.timeIntervalSince(previousStartDate))
+        appUsageByBundleIdentifier[previousBundleIdentifier, default: 0] += elapsed
+
+        activeBundleIdentifier = bundleIdentifier
+        activeAppName = appName
+        activeAppSessionStartDate = now
+
+        refreshScreenTimeEntries(activeBundleIdentifier: bundleIdentifier)
+    }
     
     func quit() {
         NSApplication.shared.terminate(self)
@@ -222,6 +268,40 @@ final class SystemDataViewModel: ObservableObject {
         if !isTemperatureSensorAvailable {
             temperatureCardSubtitle = "Temperature sensor is unavailable on this Mac"
         }
+    }
+
+    private func refreshScreenTimeEntries(activeBundleIdentifier: String) {
+        let totalTracked = appUsageByBundleIdentifier.values.reduce(0, +)
+        let totalTrackedLabel = formattedDuration(totalTracked)
+        screenTimeCardSubtitle = "Active: \(activeAppName) - Tracked: \(totalTrackedLabel)"
+
+        screenTimeEntries = appUsageByBundleIdentifier
+            .sorted { $0.value > $1.value }
+            .prefix(screenTimeEntryLimit)
+            .map { bundleIdentifier, duration in
+                AppScreenTimeEntry(
+                    bundleIdentifier: bundleIdentifier,
+                    appName: appNameByBundleIdentifier[bundleIdentifier] ?? bundleIdentifier,
+                    duration: duration,
+                    icon: appIconByBundleIdentifier[bundleIdentifier],
+                    isActive: bundleIdentifier == activeBundleIdentifier
+                )
+            }
+    }
+
+    func formattedDuration(_ duration: TimeInterval) -> String {
+        let clamped = max(0, Int(duration.rounded()))
+        let hours = clamped / 3600
+        let minutes = (clamped % 3600) / 60
+        let seconds = clamped % 60
+
+        if hours > 0 {
+            return String(format: "%02dh %02dm", hours, minutes)
+        }
+        if minutes > 0 {
+            return String(format: "%02dm %02ds", minutes, seconds)
+        }
+        return String(format: "%02ds", seconds)
     }
 }
 

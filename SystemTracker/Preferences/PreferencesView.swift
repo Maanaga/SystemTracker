@@ -31,7 +31,7 @@ struct PreferencesView: View {
         .padding(18)
         .frame(width: 500, height: 360, alignment: .top)
         .glassEffect(in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .beam(palette: .ocean)
+        .beam(palette: .ocean, duration: 3.0)
     }
     
     @ViewBuilder
