@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A102F95B2F98BB1B0082C389 /* Beam in Frameworks */ = {isa = PBXBuildFile; productRef = A102F95A2F98BB1B0082C389 /* Beam */; };
 		A18478F02F8A6DA200475FE1 /* SystemKit in Frameworks */ = {isa = PBXBuildFile; productRef = A18478EF2F8A6DA200475FE1 /* SystemKit */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A18478F02F8A6DA200475FE1 /* SystemKit in Frameworks */,
+				A102F95B2F98BB1B0082C389 /* Beam in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +73,7 @@
 			name = SystemTracker;
 			packageProductDependencies = (
 				A18478EF2F8A6DA200475FE1 /* SystemKit */,
+				A102F95A2F98BB1B0082C389 /* Beam */,
 			);
 			productName = SystemTracker;
 			productReference = A18478DD2F8A6AC900475FE1 /* SystemTracker.app */;
@@ -102,6 +105,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				A18478EE2F8A6DA200475FE1 /* XCRemoteSwiftPackageReference "SystemKit" */,
+				A102F9592F98BB1B0082C389 /* XCRemoteSwiftPackageReference "beam" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A18478DE2F8A6AC900475FE1 /* Products */;
@@ -344,6 +348,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A102F9592F98BB1B0082C389 /* XCRemoteSwiftPackageReference "beam" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tornikegomareli/beam";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
 		A18478EE2F8A6DA200475FE1 /* XCRemoteSwiftPackageReference "SystemKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gao-sun/SystemKit";
@@ -355,6 +367,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A102F95A2F98BB1B0082C389 /* Beam */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A102F9592F98BB1B0082C389 /* XCRemoteSwiftPackageReference "beam" */;
+			productName = Beam;
+		};
 		A18478EF2F8A6DA200475FE1 /* SystemKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A18478EE2F8A6DA200475FE1 /* XCRemoteSwiftPackageReference "SystemKit" */;

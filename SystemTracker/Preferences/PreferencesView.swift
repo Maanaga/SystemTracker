@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import Beam
 
 struct PreferencesView: View {
     @ObservedObject private var preferencesStore = PreferencesSelectionStore.shared
@@ -30,6 +31,7 @@ struct PreferencesView: View {
         .padding(18)
         .frame(width: 500, height: 360, alignment: .top)
         .glassEffect(in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .beam(palette: .ocean)
     }
     
     @ViewBuilder

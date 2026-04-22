@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Beam
 
 struct CPUDataView: View {
     @ObservedObject var viewModel: SystemDataViewModel
@@ -92,6 +93,7 @@ struct CPUDataView: View {
                 containerZoomScale = 0.965
             }
         }
+        .beam(palette: .mono)
     }
 
     @ViewBuilder
