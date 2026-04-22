@@ -23,13 +23,13 @@ enum CPUUsageCase: Equatable, Sendable {
         case .idle:
             return "CPU is nearly idle."
         case .light:
-            return "Light load - plenty of headroom."
+            return "Light load."
         case .moderate:
-            return "Moderate usage - typical for everyday work."
+            return "Moderate usage."
         case .high:
-            return "High load - apps are working the CPU hard."
+            return "High load."
         case .critical:
-            return "Very high load - system may feel sluggish."
+            return "Very high load."
         }
     }
 }
