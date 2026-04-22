@@ -13,20 +13,23 @@ struct PreferencesView: View {
     @ObservedObject private var preferencesStore = PreferencesSelectionStore.shared
     
     var body: some View {
-        HStack(alignment: .top, spacing: 18) {
-            selectionColumn(
-                title: "Menu view",
-                subtitle: "\(preferencesStore.minMenuItems)-\(preferencesStore.maxMenuItems) items",
-                items: preferencesStore.menuItems,
-                mode: .selected
-            )
-            
-            selectionColumn(
-                title: "Available",
-                subtitle: "click to append",
-                items: preferencesStore.availableItems,
-                mode: .available
-            )
+        ScrollView(.vertical, showsIndicators: false) {
+            HStack(alignment: .top, spacing: 18) {
+                selectionColumn(
+                    title: "Menu view",
+                    subtitle: "\(preferencesStore.minMenuItems)-\(preferencesStore.maxMenuItems) items",
+                    items: preferencesStore.menuItems,
+                    mode: .selected
+                )
+                
+                selectionColumn(
+                    title: "Available",
+                    subtitle: "click to append",
+                    items: preferencesStore.availableItems,
+                    mode: .available
+                )
+            }
+            .frame(maxWidth: .infinity, alignment: .top)
         }
         .padding(18)
         .frame(width: 500, height: 360, alignment: .top)
